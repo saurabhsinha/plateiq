@@ -55,6 +55,7 @@ class Utils(object):
         print(clone)
         with open(filepath, 'wb') as j:
             pickle.dump(clone, j)
+            return {'result': 'successfully updated the data'}
             j.close()
 
     @staticmethod
