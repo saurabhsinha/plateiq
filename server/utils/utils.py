@@ -1,4 +1,5 @@
 import os
+from datetime import date
 path = "/Users/saurabhkumar/plateiq/server/upload"
 class Utils(object):
     @staticmethod
@@ -29,5 +30,17 @@ class Utils(object):
             return {'result':'successfully uploaded'}
         except Exception as e:
             print(e)
+
+    @staticmethod
+    def getMockData():
+        mockdata = {
+            'invoiceNo':1234,
+            'date':date.today().strftime("%d/%m/%Y"),
+            'item':{
+                'type':'pen',
+                'quantity':2000
+            }
+        }
+        return {'result':mockdata}
 
 

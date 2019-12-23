@@ -4,17 +4,27 @@ import flask_cors
 import datetime
 import werkzeug.contrib.fixers
 from server.resources.ocr import ocr_resources
+from threading import Thread
 
 from flask import make_response
 
 app = flask.Flask(__name__)
+app2=flask.Flask(__name__)
 flask_cors.CORS(app)
+flask_cors.CORS(app2)
 
 app.wsgi_app = werkzeug.contrib.fixers.ProxyFix(app.wsgi_app)
 app.register_blueprint(ocr_resources.ocr, url_prefix='/ocr')
 
+app2.wsgi_app = werkzeug.contrib.fixers.ProxyFix(app2.wsgi_app)
+app2.register_blueprint(ocr_resources.ocr, url_prefix='/ocr')
+
 
 @app.route('/', methods=['GET'])
+def index():
+    return flask.render_template('index.html')
+
+@app2.route('/', methods=['GET'])
 def index():
     return flask.render_template('index.html')
 
@@ -22,7 +32,10 @@ def index():
 def health_check():
     logging.info('ping --> pong')
     return 'pong'
-
+@app2.route('/ping', methods=['GET'])
+def health_check():
+    logging.info('ping --> pong')
+    return 'pong2'
 # ---------------------------------------- ERROR HANDLING ----------------------------------------------------------- #
 
 def log_request(request):
@@ -43,5 +56,9 @@ def not_found(error):
 def main():
     app.run(host='0.0.0.0', use_reloader=False, debug=True, port=3001)
 
+def main2():
+    app2.run(host='0.0.0.0', use_reloader=False, debug=True, port=3002)
+
 if __name__ == '__main__':
-    main()
+    Thread(target = main).start()
+    Thread(target = main2).start()

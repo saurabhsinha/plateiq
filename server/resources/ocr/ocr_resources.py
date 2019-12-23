@@ -23,3 +23,10 @@ def getStatus():
     except Exception as e:
         logging.exception(e)
 
+@ocr.route('/getData', methods=['GET'])
+def getData():
+    try:
+        data = Utils.getMockData()
+        return make_response(flask.jsonify(data),200)
+    except Exception as e:
+        logging.exception(e)
