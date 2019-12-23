@@ -4,6 +4,7 @@ import flask_cors
 import datetime
 import werkzeug.contrib.fixers
 from server.resources.ocr import ocr_resources
+from server.resources.internal_resource import internal_resource
 from threading import Thread
 
 from flask import make_response
@@ -17,7 +18,7 @@ app.wsgi_app = werkzeug.contrib.fixers.ProxyFix(app.wsgi_app)
 app.register_blueprint(ocr_resources.ocr, url_prefix='/ocr')
 
 app2.wsgi_app = werkzeug.contrib.fixers.ProxyFix(app2.wsgi_app)
-app2.register_blueprint(ocr_resources.ocr, url_prefix='/ocr')
+app2.register_blueprint(internal_resource.ocr_internal, url_prefix='/ocr_internal')
 
 
 @app.route('/', methods=['GET'])
@@ -45,6 +46,15 @@ def log_request(request):
                                         request.url, request.get_data(as_text=True),
                                         ', '.join([': '.join(x) for x in request.headers])]))
 @app.errorhandler(404)
+def not_found(error):
+    log_request(flask.request)
+    logging.error('Resource not found: ' + str(error))
+    return make_response(flask.jsonify({'error': 'Resource not found', 'error_code': 404,
+                                               'error_description': 'Specified resource does not exist on the server',
+                                               'error_stack': None,
+                                               'result': None}, code=404))
+
+@app2.errorhandler(404)
 def not_found(error):
     log_request(flask.request)
     logging.error('Resource not found: ' + str(error))
