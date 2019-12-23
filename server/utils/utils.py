@@ -1,3 +1,5 @@
+import os
+path = "/Users/saurabhkumar/plateiq/server/upload"
 class Utils(object):
     @staticmethod
     def prepare_response_object(result=None, error_message=None, error_code=None, error_description=None,
@@ -17,8 +19,14 @@ class Utils(object):
     @staticmethod
     def importData(request):
         try:
-            requ = request.get_data()
-            return requ.data;
+            file = request.files['image']
+            print(file)
+            print(os.path.exists(path))
+            if not os.path.exists(path):
+                os.makedirs(path)
+            with open(os.path.join(path, 'test.pdf'), "wb") as fp:
+                fp.write(request.data)
+            return {'result':'successfully uploaded'}
         except Exception as e:
             print(e)
 
