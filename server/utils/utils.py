@@ -40,19 +40,15 @@ class Utils(object):
         with open(filepath, 'rb') as json_file:
             try:
                 data = pickle.load(json_file)
-                print(data)
                 clone = data
-                # data = json.load(json_file)
                 for i in obj:
                     if i.get('invoiceNo') is not None:
                         clone[i.get('invoiceNo')] = i
 
             except EOFError:
                 for i in obj:
-                    print(i)
                     clone[i.get('invoiceNo')] = i
         json_file.close()
-        print(clone)
         with open(filepath, 'wb') as j:
             pickle.dump(clone, j)
             return {'result': 'successfully updated the data'}
